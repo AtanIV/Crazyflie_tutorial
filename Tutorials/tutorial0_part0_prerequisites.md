@@ -6,6 +6,29 @@ This part covers everything you need installed and configured before starting th
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Install and configure all software and hardware prerequisites |
+| Requires hardware? | Software-only for Sections 1(a)–1(d); Vicon cameras + Windows PC for Section 2 |
+| What you'll install | ROS2 Humble, Crazyswarm2, cflib, cfclient, crazyflie-firmware bindings, motion_capture_tracking |
+| What you'll configure | Crazyradio firmware + udev, drone firmware + radio addresses, Vicon Tracker masking/calibration/origin |
+| Expected result | All checklists pass; ready to start Example 1 |
+
+---
+
+## Contents
+
+1. [Section 1: Environment Prerequisites](#section-1-environment-prerequisites)
+   - [1(a) — Installing Ubuntu 22.04 and ROS2 Humble](#1a-installing-ubuntu-2204-and-ros2-humble)
+   - [1(b) — Pulling and Building the Codebase](#1b-pulling-and-building-the-codebase)
+   - [1(c) — Crazyradio Drivers and Firmware](#1c-crazyradio-drivers-and-firmware)
+   - [1(d) — Firmware Setup for Physical Drones](#1d-firmware-setup-for-physical-drones)
+2. [Section 2: Mocap Prerequisites](#section-2-mocap-prerequisites)
+
+---
+
 ## Section 1: Environment Prerequisites
 
 ### 1(a) — Installing Ubuntu 22.04 and ROS2 Humble
@@ -25,7 +48,8 @@ An alternative automated installer (useful if GPG or repository issues are encou
 - **Ubuntu 22.04 LTS (Jammy Jellyfish), 64-bit** — required for ROS2 Humble binary packages
 - **Dual-boot or bare-metal install strongly recommended**
 
-> **Warning! Avoid using a virtual machine (VM).** VMs introduce issues that are hard to diagnose and not covered by this tutorial: graphics card passthrough problems break RViz2 and vispy rendering; network adapter configuration makes Vicon streaming unreliable; USB passthrough for the Crazyradio is inconsistent; and the additional performance overhead can cause timing problems with the 30Hz control loops used in later examples. If you absolutely must use a VM, set the network adapter to "Bridged" mode and expect to debug issues on your own.
+> [!WARNING]
+> **Avoid using a virtual machine (VM).** VMs introduce issues that are hard to diagnose and not covered by this tutorial: graphics card passthrough problems break RViz2 and vispy rendering; network adapter configuration makes Vicon streaming unreliable; USB passthrough for the Crazyradio is inconsistent; and the additional performance overhead can cause timing problems with the 30Hz control loops used in later examples. If you absolutely must use a VM, set the network adapter to "Bridged" mode and expect to debug issues on your own.
 
 - Minimum: 4GB RAM, 25GB free disk (building the firmware and multiple ROS2 workspaces consumes significant space)
 - If you already have Ubuntu 22.04 installed, skip the OS install step below
@@ -151,7 +175,8 @@ rosdep update
 
 **System Python Hygiene**
 
-> **Warning!** If you have Anaconda or Miniconda installed, conda's Python will shadow the system Python. ROS2 packages will fail to import with cryptic `ModuleNotFoundError` messages. This was one of the most frequent issues encountered during the development of these examples.
+> [!WARNING]
+> If you have Anaconda or Miniconda installed, conda's Python will shadow the system Python. ROS2 packages will fail to import with cryptic `ModuleNotFoundError` messages. This was one of the most frequent issues encountered during the development of these examples.
 
 Check which Python your terminal is using:
 
@@ -613,7 +638,8 @@ The Crazyradio 2.0 has two firmware families:
 
 This tutorial uses the **native firmware (v5.4+)**. The multi-drone performance comes from inline mode, not from PA emulation.
 
-> **Important:** The Crazyswarm2 `cpp` backend has known bugs when used with Crazyradio 2.0, which is why this tutorial exclusively uses the `cflib` (Python) backend for hardware code. With the `cflib` backend and native firmware v5.x, multi-drone communication is reliable.
+> [!IMPORTANT]
+> The Crazyswarm2 `cpp` backend has known bugs when used with Crazyradio 2.0, which is why this tutorial exclusively uses the `cflib` (Python) backend for hardware code. With the `cflib` backend and native firmware v5.x, multi-drone communication is reliable.
 
 #### Step 1: Set Up udev Permissions
 
@@ -1045,7 +1071,8 @@ ros2 run motion_capture_tracking motion_capture_tracking_node \
 
 This starts only `motion_capture_tracking_node` — no `crazyflie_server`, no `teleop`, no Crazyradio needed. The node connects to Vicon Tracker and publishes matched poses to `/poses`.
 
-> **Important:** The config key is `/motion_capture_tracking_node` (with the `_node` suffix). When run through `ros2 run`, the node registers with this full executable name. The CS2 launch file uses `name='motion_capture_tracking'` (without the suffix), which is handled by the `/motion_capture_tracking` key in the in-package config. The standalone config must match the node's actual registered name.
+> [!IMPORTANT]
+> The config key is `/motion_capture_tracking_node` (with the `_node` suffix). When run through `ros2 run`, the node registers with this full executable name. The CS2 launch file uses `name='motion_capture_tracking'` (without the suffix), which is handled by the `/motion_capture_tracking` key in the in-package config. The standalone config must match the node's actual registered name.
 
 > **If port 801 or DNS errors appear:** The node may print warnings about being unable to connect. Verify the Vicon PC is reachable (`ping 192.168.10.1`) and the Ethernet interface has the static IP configured (Step 3).
 

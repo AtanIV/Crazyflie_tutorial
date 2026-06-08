@@ -6,6 +6,34 @@ Every line of every file is written out and explained in full. Each explanation 
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Fly one simulated Crazyflie through takeoff, hover, landing |
+| Requires hardware? | No |
+| Main package | `sim_takeoff` |
+| Main script | `takeoff_hover_land.py` |
+| New concepts | ROS2 node, services, `cmd_full_state`, `RateController`, `FlightSession` |
+| Expected result | Drone takes off to 0.5m, hovers 5s, then lands |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Section 1: Create the Workspace and Package](#section-1-create-the-workspace-and-package)
+3. [Section 2: Write the Configuration File](#section-2-write-the-configuration-file)
+4. [Section 3: Write the Launch File](#section-3-write-the-launch-file)
+5. [Section 4: Write the Flight Script](#section-4-write-the-flight-script)
+6. [Section 5: Register the Entry Point](#section-5-register-the-entry-point)
+7. [Section 6: Build and Test](#section-6-build-and-test)
+8. [Section 7: How It Works — Architecture Recap](#section-7-how-it-works-architecture-recap)
+9. [Verification Checklist](#verification-checklist)
+10. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```

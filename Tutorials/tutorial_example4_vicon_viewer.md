@@ -10,6 +10,34 @@ This example assumes completion of Examples 1-3. Familiarity with ROS2 package s
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Build a real-time 3D mocap viewer + fake data source |
+| Requires hardware? | No (Phase 1) / Yes — Vicon (Phase 2) |
+| Main package | `vicon_viewer` |
+| Main scripts | `drone_viewer.py`, `fake_mocap.py` |
+| New concepts | vispy 3D rendering, `/poses` subscription, BEST_EFFORT QoS, thread-safe data bridge, CSV recording |
+| Expected result | 3D window shows coloured drone markers with trails, shadows, and HUD |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Section 1: Create the Package](#section-1-create-the-package)
+3. [Section 2: Write the Configuration Files](#section-2-write-the-configuration-files)
+4. [Section 3: Write fake_mocap.py](#section-3-write-fake_mocappy)
+5. [Section 4: Write drone_viewer.py](#section-4-write-drone_viewerpy)
+6. [Section 5: Write the Launch File](#section-5-write-the-launch-file)
+7. [Section 6: Register Entry Points](#section-6-register-entry-points)
+8. [Section 7: Build and Test](#section-7-build-and-test)
+9. [Key Concepts](#key-concepts)
+10. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```

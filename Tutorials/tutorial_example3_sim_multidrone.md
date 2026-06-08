@@ -6,6 +6,35 @@ This example assumes having completed Examples 1 and 2. Reused patterns (`RateCo
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Fly two simulated drones simultaneously (square + circle) |
+| Requires hardware? | No |
+| Main package | `sim_multidrone` |
+| Main script | `multi_flight.py` |
+| New concepts | Multi-drone config, per-drone dicts, circle trajectory, hover-wait sync, multi-drone RViz |
+| Expected result | Two drones take off together, fly their trajectories, return, and land |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Section 1: Create the Package](#section-1-create-the-package)
+3. [Section 2: Write the Multi-Drone Configuration](#section-2-write-the-multi-drone-configuration)
+4. [Section 3: Write the RViz Config](#section-3-write-the-rviz-config)
+5. [Section 4: Write the Launch File](#section-4-write-the-launch-file)
+6. [Section 5: Write the Flight Script](#section-5-write-the-flight-script)
+7. [Section 6: Register the Entry Point](#section-6-register-the-entry-point)
+8. [Section 7: Build and Test](#section-7-build-and-test)
+9. [Section 8: Architecture Recap](#section-8-architecture-recap)
+10. [Verification Checklist](#verification-checklist)
+11. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```

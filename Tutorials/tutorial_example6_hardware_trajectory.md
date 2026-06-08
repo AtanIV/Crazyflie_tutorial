@@ -11,6 +11,29 @@ This example assumes completion of Examples 1-5.
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Fly trajectory missions on real hardware (single + multi-drone) |
+| Requires hardware? | **Yes** — 1-2 Crazyflies, Crazyradio, Vicon |
+| Main package | `hardware_trajectory` |
+| Main scripts | `trajectory_flight.py` (6A), `trajectory_flight2.py` (6B) |
+| New concepts | Hardware trajectory execution, move-to-start, live progress display, per-drone safety in multi-drone flight, return-to-start + keyboard-gated landing |
+| Expected result | Single drone flies a rectangle; two drones fly rectangle + circle simultaneously |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Part A — Single-Drone Trajectory Flight](#part-a-single-drone-trajectory-flight)
+3. [Part B — Multi-Drone Trajectory Flight](#part-b-multi-drone-trajectory-flight)
+4. [Key Concepts (6A + 6B)](#key-concepts-6a-6b)
+5. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```
@@ -992,7 +1015,8 @@ Add the `run()` method inside the `TrajectoryFlightNode` class. The pre-flight s
 
 ```
 
-**Yaw alignment note:** Single-marker Vicon provides position only (no orientation — the quaternion in `/poses` is NaN). Yaw is unobservable and cannot be corrected automatically. Before takeoff, physically place the drone on the floor facing the world +X direction. The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame — so the drone must start facing +X to match the world coordinate system used by all setpoint commands.
+> [!WARNING]
+> **Yaw alignment:** Single-marker Vicon provides position only (no orientation — the quaternion in `/poses` is NaN). Yaw is unobservable and cannot be corrected automatically. Before takeoff, physically place the drone on the floor facing the world +X direction. The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame — so the drone must start facing +X to match the world coordinate system used by all setpoint commands.
 
 **READY_TO_MOVE** — waits for 'M' key while hovering at current position:
 
@@ -1143,7 +1167,8 @@ Add the `run()` method inside the `TrajectoryFlightNode` class. The pre-flight s
 
 The progress display uses `\r` (carriage return) to overwrite the same line each update. It shows: current segment (1-4), elapsed time, total time, commanded position (cmd), and tracking error in cm (distance between EKF position and commanded position). The `int(elapsed * 2) % 2 == 0` condition limits updates to every 0.5 seconds to avoid excessive console output.
 
-**World-frame assumption:** The rectangle setpoints are computed in world coordinates and published as-is. The drone must be physically placed facing world +X before takeoff — with single-marker Vicon, yaw is unobservable and the EKF's yaw estimate at takeoff is whatever it was at power-on. Placing the drone correctly ensures the body frame aligns with the world frame.
+> [!WARNING]
+> **World-frame assumption:** The rectangle setpoints are computed in world coordinates and published as-is. The drone must be physically placed facing world +X before takeoff — with single-marker Vicon, yaw is unobservable and the EKF's yaw estimate at takeoff is whatever it was at power-on. Placing the drone correctly ensures the body frame aligns with the world frame.
 
 **Post-trajectory hover and landing** — add after the FLYING state's `while` loop:
 
@@ -1243,6 +1268,24 @@ setup(
 
 ---
 
+## Pre-flight safety checklist
+
+Before any launch command, verify every item:
+
+- [ ] Propellers are installed correctly and not damaged
+- [ ] All drones are placed on a flat surface facing world **+X**
+- [ ] Vicon marker for each drone is visible in `/poses` and paired to the correct name
+- [ ] EKF has converged for each drone (position spread < 1 cm)
+- [ ] Supervisor `CAN_FLY` bit is set (0x08) for each drone
+- [ ] Battery voltage is above 3.2 V for each drone
+- [ ] Emergency key ('E') is understood — press it at any time for immediate landing of all drones
+- [ ] Flight area is clear of people and obstacles
+
+> [!WARNING]
+> **Yaw orientation matters.** Single-marker Vicon provides position only — no orientation. The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame. Each drone **must** face world +X before takeoff or all position corrections will be applied in a rotated frame.
+
+---
+
 ### A.5: Build and Test (6A)
 
 ```bash
@@ -1250,7 +1293,8 @@ cd $CRAZYFLIE_TUTORIAL/tutorial_ws
 colcon build --symlink-install
 ```
 
-**Pre-flight verification:** Same manual checks as Example 5 (verify `/poses`, `/cf1/pose`, `/cf1/status`). The viewer from Example 4 can be used for visual verification — launch it in a separate terminal with `ros2 run vicon_viewer drone_viewer` to confirm the drone's marker appears at the expected position before flight.
+> [!CAUTION]
+> **Never skip pre-flight verification.** Same manual checks as Example 5 (verify `/poses`, `/cf1/pose`, `/cf1/status`). The viewer from Example 4 can be used for visual verification — launch it in a separate terminal with `ros2 run vicon_viewer drone_viewer` to confirm the drone's marker appears at the expected position before flight.
 
 **Launch and run (separate terminals, recommended for debugging):**
 
@@ -2271,7 +2315,8 @@ The pre-flight states use the same pattern as 6A but operate on all drones simul
             return
 ```
 
-**Yaw alignment note:** Same as 6A — single-marker Vicon provides no orientation. Place all drones facing world +X before takeoff.
+> [!WARNING]
+> **Yaw alignment:** Same as 6A — single-marker Vicon provides no orientation. Place all drones facing world +X before takeoff.
 
 **Move-to-start and fly (multi-drone with hover-wait):**
 
@@ -2574,7 +2619,8 @@ cd $CRAZYFLIE_TUTORIAL/tutorial_ws
 colcon build --symlink-install
 ```
 
-**Pre-flight verification:** Check `/poses`, `/{drone}/pose`, and `/{drone}/status` for BOTH drones. The viewer from Example 4 is especially useful here — launch it with `ros2 run vicon_viewer drone_viewer` to visually confirm both drones' markers appear at their expected positions and with correct labels before flight.
+> [!CAUTION]
+> **Never skip pre-flight verification.** Check `/poses`, `/{drone}/pose`, and `/{drone}/status` for BOTH drones. The viewer from Example 4 is especially useful here — launch it with `ros2 run vicon_viewer drone_viewer` to visually confirm both drones' markers appear at their expected positions and with correct labels before flight.
 
 **Launch and run (separate terminals, recommended for debugging):**
 

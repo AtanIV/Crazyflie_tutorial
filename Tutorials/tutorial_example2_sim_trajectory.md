@@ -6,6 +6,34 @@ This example assumes having completed Example 1. Reused patterns (`RateControlle
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | Fly a square trajectory with velocity feedforward |
+| Requires hardware? | No |
+| Main package | `sim_trajectory` |
+| Main script | `trajectory_flight.py` |
+| New concepts | Dynamic setpoints, velocity feedforward, trajectory decomposition, PID vs Mellinger |
+| Expected result | Drone takes off, flies a 1m square at 0.3 m/s, lands |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Section 1: Create the Package](#section-1-create-the-package)
+3. [Section 2: Write the Configuration File](#section-2-write-the-configuration-file)
+4. [Section 3: Write the Launch File](#section-3-write-the-launch-file)
+5. [Section 4: Write the Flight Script](#section-4-write-the-flight-script)
+6. [Section 5: Register the Entry Point](#section-5-register-the-entry-point)
+7. [Section 6: Build and Test](#section-6-build-and-test)
+8. [Section 7: How It Works — Velocity Feedforward and Controller Choice](#section-7-how-it-works-velocity-feedforward-and-controller-choice)
+9. [Verification Checklist](#verification-checklist)
+10. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```

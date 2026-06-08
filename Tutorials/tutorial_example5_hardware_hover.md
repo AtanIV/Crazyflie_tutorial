@@ -8,6 +8,34 @@ This example assumes completion of Examples 1-4 and that all hardware prerequisi
 
 ---
 
+## At a glance
+
+| Item | Value |
+|---|---|
+| Goal | First hardware hover — connect, verify, hover, land safely |
+| Requires hardware? | **Yes** — Crazyflie, Crazyradio, Vicon |
+| Main package | `hardware_hover` |
+| Main script | `hover_test.py` |
+| New concepts | Keyboard-gated safety state machine, pre-flight checks (mocap pairing, EKF convergence, CAN_FLY), CSV logging, raw terminal input |
+| Expected result | Drone takes off to 30cm after user presses 'T', hovers, lands safely |
+
+---
+
+## Contents
+
+1. [Files Created](#files-created)
+2. [Section 1: Create the Package](#section-1-create-the-package)
+3. [Section 2: Write crazyflies.yaml](#section-2-write-crazyflieyaml)
+4. [Section 3: Write motion_capture.yaml](#section-3-write-motion_captureyaml)
+5. [Section 4: Write flight_config.yaml](#section-4-write-flight_configyaml)
+6. [Section 5: Write the Launch File](#section-5-write-the-launch-file)
+7. [Section 6: Write hover_test.py](#section-6-write-hover_testpy)
+8. [Section 7: Register Entry Points](#section-7-register-entry-points)
+9. [Section 8: Build and Test](#section-8-build-and-test)
+10. [Potential Issues](#potential-issues)
+
+---
+
 ## Files Created
 
 ```
@@ -1089,7 +1117,8 @@ The drone must reach at least 60% of the target height. If not, something failed
 
 During stabilizing, **no LLC commands are sent.** The HLC takeoff planner naturally holds at the target height after completing the takeoff. Sending LLC commands would fight the HLC and cause instability.
 
-**Yaw alignment note:** Single-marker Vicon provides position only (no orientation — the quaternion in `/poses` is NaN). Yaw is unobservable and cannot be corrected automatically. Before takeoff, physically place the drone on the floor facing the world +X direction (use the Vicon coordinate system axes for reference). The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame — so the drone must start facing +X to match the world coordinate system used by all setpoint commands.
+> [!WARNING]
+> **Yaw alignment:** Single-marker Vicon provides position only (no orientation — the quaternion in `/poses` is NaN). Yaw is unobservable and cannot be corrected automatically. Before takeoff, physically place the drone on the floor facing the world +X direction (use the Vicon coordinate system axes for reference). The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame — so the drone must start facing +X to match the world coordinate system used by all setpoint commands.
 
 **READY_TO_HOVER** — waits for 'H' key while hovering at current position. The drone streams `cmd_full_state` at its current position with `yaw=0` (world +X aligned):
 
@@ -1265,6 +1294,24 @@ setup(
 
 ---
 
+## Pre-flight safety checklist
+
+Before any launch command, verify every item:
+
+- [ ] Propellers are installed correctly and not damaged
+- [ ] Drone is placed on a flat surface facing world **+X**
+- [ ] Vicon marker is visible in `/poses` and paired to the correct drone name
+- [ ] EKF has converged (position spread < 1 cm)
+- [ ] Supervisor `CAN_FLY` bit is set (0x08)
+- [ ] Battery voltage is above 3.2 V
+- [ ] Emergency key ('E') is understood — press it at any time for immediate landing
+- [ ] Flight area is clear of people and obstacles
+
+> [!WARNING]
+> **Yaw orientation matters.** Single-marker Vicon provides position only — no orientation. The EKF maintains whatever yaw estimate it starts with, and the PID controller works in a body-yaw-aligned frame. The drone **must** face world +X before takeoff or all position corrections will be applied in a rotated frame.
+
+---
+
 ## Section 8: Build and Test
 
 ### 8.1: Build
@@ -1276,7 +1323,8 @@ colcon build --symlink-install
 
 ### 8.2: Manually verify mocap and EKF data (CRITICAL)
 
-Before running the flight script, the data pipeline must be verified manually using ROS2 command-line tools. **Never skip this step.**
+> [!CAUTION]
+> **Never skip this step.** Before running the flight script, the data pipeline must be verified manually using ROS2 command-line tools.
 
 **Step 1: Launch the CS2 server.** Terminal 1:
 ```bash
