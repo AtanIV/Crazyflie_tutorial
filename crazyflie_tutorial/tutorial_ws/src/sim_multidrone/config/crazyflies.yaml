@@ -1,0 +1,36 @@
+fileversion: 3
+
+robots:
+  cf1:
+    enabled: true
+    uri: sim://cf1
+    initial_position: [0.0, 0.0, 0.0]
+    type: cf21
+
+  cf2:
+    enabled: true
+    uri: sim://cf2
+    initial_position: [2.5, 0.0, 0.0]
+    type: cf21
+
+robot_types:
+  cf21:
+    motion_capture:
+      enabled: false
+    big_quad: false
+    battery:
+      voltage_warning: 3.8
+      voltage_critical: 3.7
+
+all:
+  firmware_params:
+    commander:
+      enHighLevel: 1
+    stabilizer:
+      estimator: 2
+      controller: 2
+    locSrv:
+      extPosStdDev: 1e-3
+      extQuatStdDev: 0.5e-1
+  firmware_logging:
+    enabled: false

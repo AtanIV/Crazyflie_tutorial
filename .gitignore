@@ -1,0 +1,30 @@
+# Build artifacts (any depth)
+**/build/
+**/install/
+**/log/
+
+# Python cache
+**/__pycache__/
+*.pyc
+*.egg-info/
+*.egg-link
+
+# IDE
+.vscode/
+**/.vscode/
+
+# Firmware build output
+**/crazyflie-firmware/
+
+# Cloned dependencies (referenced by path, not stored here)
+crazyflie_tutorial/crazyflie-clients-python/
+crazyflie_tutorial/crazyflie-firmware/
+crazyflie_tutorial/crazyflie-lib-python/
+crazyflie_tutorial/crazyswarm2_repo/
+
+# Mac
+.DS_Store
+
+# Flight logs and cache
+**/logs/*.csv
+**/cache/

@@ -1,0 +1,29 @@
+drones:
+  cf1:
+    trajectory: "rectangle"
+    rectangle:
+      side_m: 0.40
+    start_position_m: [0.0, 0.0]
+  cf3:
+    trajectory: "circle"
+    circle:
+      radius_m: 0.40
+    start_position_m: [1.8, 0.0]
+
+shared:
+  height_m: 0.30
+  velocity_ms: 0.20
+  transition_velocity_ms: 0.10
+
+safety:
+  max_distance_m: 3.0
+  max_height_m: 0.60
+  min_height_m: 0.05
+  pose_timeout_s: 0.5
+  battery_critical_v: 3.2
+
+control:
+  rate_hz: 30
+  takeoff_duration_s: 3.0
+  land_duration_s: 3.0
+  hover_stabilize_s: 3.0
